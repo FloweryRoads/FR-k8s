@@ -1,0 +1,50 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: api-deploy
+  labels:
+    k8s: api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s: api
+    spec:
+      containers:
+      - name: api
+        image: {API_DOCKER_REPO_URL}
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: api-config
+      - name: api-sql
+        image: mysql:5.6
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: DB_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: api-config
+              key: DB_NAME
+        ports:
+        - containerPort: 3306
+          name: mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+spec:
+  name: api-svc
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+    name: http
+  selector:
+    k8s: api
