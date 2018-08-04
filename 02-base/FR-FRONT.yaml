@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: front-deploy
+  labels:
+    k8s: front
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        k8s: front
+    spec:
+      containers:
+      - name: front
+        image: {FRONT_DOCKER_REPO_URL}
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: front-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-svc
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    k8s: front
