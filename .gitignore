@@ -59,3 +59,8 @@ fabric.properties
 
 # env file
 .env
+
+# config file
+01-config/*.yaml
+
+_*.sh
