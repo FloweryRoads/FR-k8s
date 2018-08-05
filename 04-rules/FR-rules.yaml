@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: fr-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+  - secretName: fr-tls
+    hosts:
+    - floweryroads.io
+    - api.floweryroads.io
+  rules:
+  - host: floweryroads.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: front-svc
+          servicePort: 80
+  - host: api.floweryroads.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: api-svc
+          servicePort: 80
